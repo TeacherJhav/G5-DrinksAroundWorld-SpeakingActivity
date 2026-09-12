@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Neon Speaking Activity - What Do You Like to Drink?</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #090d16;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(176, 38, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 243, 255, 0.1) 0%, transparent 40%),
+                linear-gradient(to bottom, rgba(9, 13, 22, 0.95), rgba(9, 13, 22, 0.98)),
+                repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(255, 255, 255, 0.03) 39px, rgba(255, 255, 255, 0.03) 40px),
+                repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(255, 255, 255, 0.03) 39px, rgba(255, 255, 255, 0.03) 40px);
+            background-size: 100% 100%, 100% 100%, 100% 100%, 40px 40px, 40px 40px;
+            color: #f3f4f6;
+            touch-action: manipulation;
+            user-select: none;
+        }
+
+        h1, h2, h3, .font-display {
+            font-family: 'Fredoka', cursive;
+        }
+
+        /* Neon Border Glow Variants */
+        .neon-box-pink {
+            border: 3px solid #ff007f;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.5), inset 0 0 15px rgba(255, 0, 127, 0.15);
+        }
+        .neon-box-pink:hover {
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.8), inset 0 0 20px rgba(255, 0, 127, 0.25);
+        }
+
+        .neon-box-cyan {
+            border: 3px solid #00f3ff;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5), inset 0 0 15px rgba(0, 243, 255, 0.15);
+        }
+        .neon-box-cyan:hover {
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.8), inset 0 0 20px rgba(0, 243, 255, 0.25);
+        }
+
+        .neon-box-lime {
+            border: 3px solid #39ff14;
+            box-shadow: 0 0 15px rgba(57, 255, 20, 0.5), inset 0 0 15px rgba(57, 255, 20, 0.15);
+        }
+        .neon-box-lime:hover {
+            box-shadow: 0 0 25px rgba(57, 255, 20, 0.8), inset 0 0 20px rgba(57, 255, 20, 0.25);
+        }
+
+        .neon-box-purple {
+            border: 3px solid #b026ff;
+            box-shadow: 0 0 15px rgba(176, 38, 255, 0.5), inset 0 0 15px rgba(176, 38, 255, 0.15);
+        }
+        .neon-box-purple:hover {
+            box-shadow: 0 0 25px rgba(176, 38, 255, 0.8), inset 0 0 20px rgba(176, 38, 255, 0.25);
+        }
+
+        /* Text Glows */
+        .neon-text-pink {
+            color: #ff007f;
+            text-shadow: 0 0 8px rgba(255, 0, 127, 0.7);
+        }
+        .neon-text-cyan {
+            color: #00f3ff;
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.7);
+        }
+        .neon-text-lime {
+            color: #39ff14;
+            text-shadow: 0 0 8px rgba(57, 255, 20, 0.7);
+        }
+        .neon-text-purple {
+            color: #b026ff;
+            text-shadow: 0 0 8px rgba(176, 38, 255, 0.7);
+        }
+        .neon-text-yellow {
+            color: #ffe600;
+            text-shadow: 0 0 8px rgba(255, 230, 0, 0.7);
+        }
+
+        /* Neon Underline Input Style */
+        .neon-line-input {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+        .neon-line-input:focus {
+            border-bottom-color: #00f3ff;
+            box-shadow: 0 4px 12px -2px rgba(0, 243, 255, 0.5);
+        }
+        .neon-line-input:disabled {
+            border-bottom-color: rgba(255, 255, 255, 0.15);
+            color: #9ca3af;
+        }
+
+        /* Pulsing & Glow Animations */
+        @keyframes neonPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(1.02); }
+        }
+        .animate-neon-pulse {
+            animation: neonPulse 2.5s infinite ease-in-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090d16;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f293d;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00f3ff;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-3 md:p-6 overflow-x-hidden">
+
+    <!-- ================= PAGE 1: SETUP SCREEN ================= -->
+    <div id="pageSetup" class="max-w-2xl mx-auto my-auto w-full bg-slate-900/90 border-2 border-cyan-500/50 rounded-3xl p-6 md:p-10 shadow-[0_0_30px_rgba(0,243,255,0.25)] backdrop-blur-md transition-all">
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-cyan-950/80 border-2 border-cyan-400 text-cyan-400 mb-4 shadow-[0_0_20px_rgba(0,243,255,0.4)]">
+                <i class="fa-solid fa-gamepad text-4xl"></i>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-extrabold neon-text-cyan tracking-wider uppercase mb-2">Speaking Quest</h1>
+            <p class="text-slate-300 text-base md:text-lg">iPad Speaking Interview Activity</p>
+        </div>
+
+        <form id="setupForm" class="space-y-6" onsubmit="handleStartActivity(event)">
+            <!-- Grade Selection -->
+            <div>
+                <label class="block text-sm font-semibold uppercase tracking-wider text-cyan-300 mb-2">Select Your Grade / Class:</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <button type="button" onclick="selectGrade('501')" class="grade-btn py-3 px-4 rounded-xl border-2 border-slate-700 bg-slate-800/80 text-white font-bold hover:border-cyan-400 hover:text-cyan-300 transition-all text-center">501</button>
+                    <button type="button" onclick="selectGrade('502')" class="grade-btn py-3 px-4 rounded-xl border-2 border-slate-700 bg-slate-800/80 text-white font-bold hover:border-cyan-400 hover:text-cyan-300 transition-all text-center">502</button>
+                    <button type="button" onclick="selectGrade('503')" class="grade-btn py-3 px-4 rounded-xl border-2 border-slate-700 bg-slate-800/80 text-white font-bold hover:border-cyan-400 hover:text-cyan-300 transition-all text-center">503</button>
+                    <button type="button" onclick="selectGrade('504')" class="grade-btn py-3 px-4 rounded-xl border-2 border-slate-700 bg-slate-800/80 text-white font-bold hover:border-cyan-400 hover:text-cyan-300 transition-all text-center">504</button>
+                    <button type="button" onclick="selectGrade('505')" class="grade-btn py-3 px-4 rounded-xl border-2 border-slate-700 bg-slate-800/80 text-white font-bold hover:border-cyan-400 hover:text-cyan-300 transition-all text-center">505</button>
+                    <button type="button" onclick="selectGrade('506')" class="grade-btn py-3 px-4 rounded-xl border-2 border-slate-700 bg-slate-800/80 text-white font-bold hover:border-cyan-400 hover:text-cyan-300 transition-all text-center">506</button>
+                </div>
+                <input type="hidden" id="selectedGrade" required>
+            </div>
+
+            <!-- English Name -->
+            <div>
+                <label for="englishName" class="block text-sm font-semibold uppercase tracking-wider text-pink-400 mb-2">English Name:</label>
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-pink-400"></i>
+                    <input type="text" id="englishName" placeholder="e.g. Alex, Emma, Leo" required
+                        class="w-full pl-12 pr-4 py-3 bg-slate-950/80 border-2 border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-pink-500 focus:ring-1 focus:ring-pink-500 outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Class Number -->
+            <div>
+                <label for="classNumber" class="block text-sm font-semibold uppercase tracking-wider text-lime-400 mb-2">Class Number:</label>
+                <div class="relative">
+                    <i class="fa-solid fa-hashtag absolute left-4 top-1/2 -translate-y-1/2 text-lime-400"></i>
+                    <input type="number" id="classNumber" min="1" max="50" placeholder="e.g. 12" required
+                        class="w-full pl-12 pr-4 py-3 bg-slate-950/80 border-2 border-slate-700 rounded-xl text-white placeholder-slate-500 focus:border-lime-400 focus:ring-1 focus:ring-lime-400 outline-none transition-all">
+                </div>
+            </div>
+
+            <!-- Start Button -->
+            <button type="submit" 
+                class="w-full py-4 mt-4 bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 rounded-2xl text-white font-black text-xl uppercase tracking-wider shadow-[0_0_20px_rgba(255,0,127,0.5)] hover:shadow-[0_0_30px_rgba(0,243,255,0.8)] active:scale-[0.98] transition-all">
+                Start Activity <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </form>
+    </div>
+
+
+    <!-- ================= PAGE 2: MAIN INTERVIEW GRID ================= -->
+    <div id="pageMain" class="hidden flex-col min-h-screen max-w-6xl mx-auto w-full">
+        <!-- Header Info -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center bg-slate-900/80 border border-slate-800 rounded-2xl p-4 mb-6 backdrop-blur-md gap-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 rounded-xl bg-pink-950/80 border border-pink-500 flex items-center justify-center text-pink-400 text-xl font-bold shadow-[0_0_10px_rgba(255,0,127,0.4)]">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <div class="text-xs text-slate-400 uppercase tracking-widest font-semibold">Interviewer Student</div>
+                    <div class="text-lg font-bold text-white flex items-center gap-2">
+                        <span id="displayStudentName" class="neon-text-pink">Student Name</span>
+                        <span class="text-slate-500">•</span>
+                        <span id="displayGradeClass" class="text-cyan-400">Class 501 #12</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-950/80 border border-purple-500/40 rounded-xl px-4 py-2 flex items-center gap-3">
+                <i class="fa-solid fa-comments text-purple-400 text-lg"></i>
+                <div class="text-sm">
+                    <span class="text-slate-400">Target Question: </span>
+                    <span class="neon-text-yellow font-bold">"What do you like to drink?"</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Title -->
+        <div class="text-center mb-6">
+            <h1 class="text-2xl md:text-4xl font-extrabold text-white tracking-wide uppercase">
+                Interview: <span class="neon-text-cyan">What Do You Like To Drink?</span>
+            </h1>
+            <p class="text-slate-400 text-sm md:text-base mt-1">Record short video responses with 4 classmates & write their answers below!</p>
+        </div>
+
+        <!-- 4 Grid Boxes -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <!-- Box 1: Neon Pink -->
+            <div id="boxContainer-0" class="neon-box-pink bg-slate-900/90 rounded-2xl p-4 flex flex-col justify-between backdrop-blur-md transition-all">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-pink-950 text-pink-400 border border-pink-500/40">
+                        Interview 1
+                    </span>
+                    <span id="statusBadge-0" class="text-xs font-semibold text-slate-400 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-notch animate-spin text-pink-500"></i> Waiting
+                    </span>
+                </div>
+
+                <!-- Video Frame Area -->
+                <div class="relative w-full aspect-video bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center my-2 border border-slate-800">
+                    <div id="videoPlaceholder-0" class="flex flex-col items-center justify-center text-center p-4">
+                        <button onclick="openRecordModal(0)" class="w-16 h-16 rounded-full bg-pink-500/20 border-2 border-pink-500 text-pink-400 flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(255,0,127,0.5)] mb-2">
+                            <i class="fa-solid fa-video"></i>
+                        </button>
+                        <span class="text-sm text-pink-300 font-semibold">Tap to Record Video</span>
+                    </div>
+
+                    <video id="recordedVideo-0" class="hidden w-full h-full object-cover" controls playsinline></video>
+                </div>
+
+                <!-- Input Fields -->
+                <div class="space-y-3 mt-2">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-pink-300 mb-1">Interviewee Name:</label>
+                        <input type="text" id="intervieweeName-0" placeholder="e.g. Sarah" class="neon-line-input w-full px-2 py-1 text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-pink-300 mb-1">Complete Sentence Answer:</label>
+                        <input type="text" id="intervieweeAnswer-0" placeholder='e.g. "I like bubble tea."' class="neon-line-input w-full px-2 py-1 text-white text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box 2: Neon Cyan -->
+            <div id="boxContainer-1" class="neon-box-cyan bg-slate-900/90 rounded-2xl p-4 flex flex-col justify-between backdrop-blur-md transition-all">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-cyan-950 text-cyan-400 border border-cyan-500/40">
+                        Interview 2
+                    </span>
+                    <span id="statusBadge-1" class="text-xs font-semibold text-slate-400 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-notch animate-spin text-cyan-500"></i> Waiting
+                    </span>
+                </div>
+
+                <!-- Video Frame Area -->
+                <div class="relative w-full aspect-video bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center my-2 border border-slate-800">
+                    <div id="videoPlaceholder-1" class="flex flex-col items-center justify-center text-center p-4">
+                        <button onclick="openRecordModal(1)" class="w-16 h-16 rounded-full bg-cyan-500/20 border-2 border-cyan-500 text-cyan-400 flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,243,255,0.5)] mb-2">
+                            <i class="fa-solid fa-video"></i>
+                        </button>
+                        <span class="text-sm text-cyan-300 font-semibold">Tap to Record Video</span>
+                    </div>
+
+                    <video id="recordedVideo-1" class="hidden w-full h-full object-cover" controls playsinline></video>
+                </div>
+
+                <!-- Input Fields -->
+                <div class="space-y-3 mt-2">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-cyan-300 mb-1">Interviewee Name:</label>
+                        <input type="text" id="intervieweeName-1" placeholder="e.g. Ken" class="neon-line-input w-full px-2 py-1 text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-cyan-300 mb-1">Complete Sentence Answer:</label>
+                        <input type="text" id="intervieweeAnswer-1" placeholder='e.g. "I like iced chocolate."' class="neon-line-input w-full px-2 py-1 text-white text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box 3: Neon Lime -->
+            <div id="boxContainer-2" class="neon-box-lime bg-slate-900/90 rounded-2xl p-4 flex flex-col justify-between backdrop-blur-md transition-all">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-lime-950 text-lime-400 border border-lime-500/40">
+                        Interview 3
+                    </span>
+                    <span id="statusBadge-2" class="text-xs font-semibold text-slate-400 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-notch animate-spin text-lime-500"></i> Waiting
+                    </span>
+                </div>
+
+                <!-- Video Frame Area -->
+                <div class="relative w-full aspect-video bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center my-2 border border-slate-800">
+                    <div id="videoPlaceholder-2" class="flex flex-col items-center justify-center text-center p-4">
+                        <button onclick="openRecordModal(2)" class="w-16 h-16 rounded-full bg-lime-500/20 border-2 border-lime-500 text-lime-400 flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(57,255,20,0.5)] mb-2">
+                            <i class="fa-solid fa-video"></i>
+                        </button>
+                        <span class="text-sm text-lime-300 font-semibold">Tap to Record Video</span>
+                    </div>
+
+                    <video id="recordedVideo-2" class="hidden w-full h-full object-cover" controls playsinline></video>
+                </div>
+
+                <!-- Input Fields -->
+                <div class="space-y-3 mt-2">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-lime-300 mb-1">Interviewee Name:</label>
+                        <input type="text" id="intervieweeName-2" placeholder="e.g. Mia" class="neon-line-input w-full px-2 py-1 text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-lime-300 mb-1">Complete Sentence Answer:</label>
+                        <input type="text" id="intervieweeAnswer-2" placeholder='e.g. "I like orange juice."' class="neon-line-input w-full px-2 py-1 text-white text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Box 4: Neon Purple -->
+            <div id="boxContainer-3" class="neon-box-purple bg-slate-900/90 rounded-2xl p-4 flex flex-col justify-between backdrop-blur-md transition-all">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-purple-950 text-purple-400 border border-purple-500/40">
+                        Interview 4
+                    </span>
+                    <span id="statusBadge-3" class="text-xs font-semibold text-slate-400 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-notch animate-spin text-purple-500"></i> Waiting
+                    </span>
+                </div>
+
+                <!-- Video Frame Area -->
+                <div class="relative w-full aspect-video bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center my-2 border border-slate-800">
+                    <div id="videoPlaceholder-3" class="flex flex-col items-center justify-center text-center p-4">
+                        <button onclick="openRecordModal(3)" class="w-16 h-16 rounded-full bg-purple-500/20 border-2 border-purple-500 text-purple-400 flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all shadow-[0_0_20px_rgba(176,38,255,0.5)] mb-2">
+                            <i class="fa-solid fa-video"></i>
+                        </button>
+                        <span class="text-sm text-purple-300 font-semibold">Tap to Record Video</span>
+                    </div>
+
+                    <video id="recordedVideo-3" class="hidden w-full h-full object-cover" controls playsinline></video>
+                </div>
+
+                <!-- Input Fields -->
+                <div class="space-y-3 mt-2">
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-purple-300 mb-1">Interviewee Name:</label>
+                        <input type="text" id="intervieweeName-3" placeholder="e.g. Lucas" class="neon-line-input w-full px-2 py-1 text-white text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase font-semibold text-purple-300 mb-1">Complete Sentence Answer:</label>
+                        <input type="text" id="intervieweeAnswer-3" placeholder='e.g. "I like lemon tea."' class="neon-line-input w-full px-2 py-1 text-white text-sm">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Done Action -->
+        <div class="mt-auto pb-6 text-center">
+            <button onclick="confirmSubmitDone()" 
+                class="px-10 py-4 bg-gradient-to-r from-lime-400 via-emerald-500 to-cyan-500 text-slate-950 font-black text-2xl rounded-2xl uppercase tracking-wider shadow-[0_0_25px_rgba(57,255,20,0.6)] hover:shadow-[0_0_35px_rgba(57,255,20,0.9)] hover:scale-105 active:scale-95 transition-all">
+                <i class="fa-solid fa-check-double mr-2"></i> DONE & SUBMIT
+            </button>
+            <p class="text-xs text-slate-400 mt-2">Note: Make sure your videos & answers are saved before clicking Done!</p>
+        </div>
+    </div>
+
+
+    <!-- ================= CAMERA RECORDING MODAL ================= -->
+    <div id="cameraModal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-cyan-400 rounded-3xl p-5 md:p-6 max-w-lg w-full shadow-[0_0_40px_rgba(0,243,255,0.4)] flex flex-col items-center">
+            <div class="flex justify-between items-center w-full mb-4">
+                <h3 id="modalTitle" class="text-xl font-bold neon-text-cyan flex items-center gap-2">
+                    <i class="fa-solid fa-camera"></i> Record Video Interview
+                </h3>
+                <button onclick="closeCameraModal()" class="text-slate-400 hover:text-white text-xl p-1">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Viewport Screen -->
+            <div class="relative w-full aspect-video bg-black rounded-2xl overflow-hidden border border-slate-700 shadow-inner flex items-center justify-center mb-4">
+                <video id="cameraPreview" class="w-full h-full object-cover" autoplay muted playsinline></video>
+                <video id="modalRecordedPreview" class="hidden w-full h-full object-cover" controls playsinline></video>
+
+                <div id="recordingIndicator" class="hidden absolute top-3 left-3 bg-red-600/90 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-2 animate-pulse">
+                    <span class="w-2.5 h-2.5 bg-white rounded-full"></span> RECORDING (<span id="recordTimer">0s</span>)
+                </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="w-full flex flex-wrap justify-center gap-3">
+                <button id="btnStartRecord" onclick="startRecording()" 
+                    class="py-3 px-6 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(255,0,127,0.5)] flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-circle text-sm"></i> Start Record
+                </button>
+
+                <button id="btnStopRecord" onclick="stopRecording()" disabled
+                    class="py-3 px-6 bg-slate-700 text-slate-400 font-bold rounded-xl flex items-center gap-2 transition-all opacity-50 cursor-not-allowed">
+                    <i class="fa-solid fa-square text-sm"></i> Stop
+                </button>
+
+                <button id="btnRetake" onclick="retakeVideo()" class="hidden py-3 px-6 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-xl shadow-[0_0_15px_rgba(245,158,11,0.5)] flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-rotate-left"></i> Retake
+                </button>
+
+                <button id="btnSaveVideo" onclick="saveVideo()" class="hidden py-3 px-6 bg-lime-500 hover:bg-lime-400 text-slate-950 font-extrabold rounded-xl shadow-[0_0_20px_rgba(57,255,20,0.6)] flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-lock"></i> Save Video
+                </button>
+            </div>
+
+            <div class="mt-4 text-center">
+                <button onclick="useSimulatedVideo()" class="text-xs text-slate-400 hover:text-cyan-300 underline">
+                    Having camera issue? Tap to generate Demo Clip
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ================= PAGE 3: FINAL EVALUATION & CELEBRATION ================= -->
+    <div id="pageFinal" class="hidden flex-col min-h-screen max-w-5xl mx-auto w-full py-6 px-4">
+        <!-- Congratulatory Banner -->
+        <div class="text-center mb-8 animate-neon-pulse">
+            <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-slate-950 text-5xl mb-4 shadow-[0_0_40px_rgba(255,230,0,0.8)]">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black neon-text-yellow uppercase tracking-wider mb-2">Awesome Job!</h1>
+            <p class="text-slate-300 text-lg">Interview Speaking Quest Completed!</p>
+        </div>
+
+        <!-- Student & Score Header Summary Card -->
+        <div class="bg-slate-900/90 border-2 border-yellow-400/60 rounded-3xl p-6 mb-8 backdrop-blur-md shadow-[0_0_30px_rgba(255,230,0,0.2)] flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="space-y-1 text-center md:text-left">
+                <span class="text-xs font-bold uppercase tracking-widest text-cyan-400">Interviewer Report</span>
+                <h2 id="finalStudentName" class="text-2xl font-bold text-white">Student Name</h2>
+                <p id="finalGradeClass" class="text-slate-300 text-sm">Class 501 • Number #12</p>
+                <div class="text-xs text-purple-300 mt-2">
+                    Topic: <span class="text-yellow-300 font-semibold">"What do you like to drink?"</span>
+                </div>
+            </div>
+
+            <!-- Dynamic Score Badge -->
+            <div class="bg-slate-950/90 border border-yellow-400 rounded-2xl p-4 text-center min-w-[200px] shadow-[0_0_20px_rgba(255,230,0,0.3)]">
+                <div class="text-xs font-bold uppercase text-slate-400 mb-1">Completion Score</div>
+                <div id="finalScoreDisplay" class="text-4xl font-extrabold neon-text-lime">100%</div>
+                <div id="finalBoxesCount" class="text-xs text-slate-400 mt-1">4 / 4 Videos Completed</div>
+            </div>
+        </div>
+
+        <!-- Recorded Interviews Review Grid -->
+        <div class="mb-8">
+            <h3 class="text-xl font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-film text-pink-500"></i> Interview Recorded Clips & Answers
+            </h3>
+            <div id="finalGridContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Dynamically populated via JS -->
+            </div>
+        </div>
+
+        <!-- Teacher Evaluation Notice -->
+        <div class="bg-slate-900/80 border border-cyan-500/30 rounded-2xl p-5 mb-8 text-center text-sm text-slate-300 backdrop-blur-md">
+            <i class="fa-solid fa-circle-info text-cyan-400 text-lg mb-1 block"></i>
+            <span class="font-semibold text-white">Teacher Evaluation Note:</span>
+            The completion score above is based on submitted videos. The final speaking score will be evaluated by the teacher based on pronunciation, fluency, and complete sentence usage.
+        </div>
+
+        <!-- Action Controls -->
+        <div class="flex justify-center gap-4 mb-8">
+            <button onclick="window.print()" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl text-white font-bold flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-print"></i> Print Summary
+            </button>
+            <button onclick="location.reload()" class="px-6 py-3 bg-pink-600 hover:bg-pink-500 rounded-xl text-white font-bold shadow-[0_0_15px_rgba(255,0,127,0.5)] flex items-center gap-2 transition-all">
+                <i class="fa-solid fa-rotate-right"></i> Restart Activity
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Custom Dialog Modal (No browser alert) -->
+    <div id="dialogModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border-2 border-pink-500 rounded-2xl p-6 max-w-sm w-full text-center shadow-[0_0_30px_rgba(255,0,127,0.5)]">
+            <div id="dialogIcon" class="text-4xl text-pink-400 mb-3">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <h4 id="dialogTitle" class="text-lg font-bold text-white mb-2">Attention</h4>
+            <p id="dialogMessage" class="text-sm text-slate-300 mb-5">Please complete all fields.</p>
+            <button onclick="closeDialog()" class="w-full py-2 bg-pink-600 hover:bg-pink-500 text-white font-bold rounded-xl transition-all">
+                OK
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // State Management
+        let studentInfo = {
+            grade: '',
+            name: '',
+            classNum: ''
+        };
+
+        let activeBoxIndex = null;
+        let mediaStream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordTimerInterval = null;
+        let recordSeconds = 0;
+
+        // 4 Interview Entries State
+        const boxData = [
+            { videoBlob: null, videoUrl: null, saved: false, name: '', answer: '', color: 'pink' },
+            { videoBlob: null, videoUrl: null, saved: false, name: '', answer: '', color: 'cyan' },
+            { videoBlob: null, videoUrl: null, saved: false, name: '', answer: '', color: 'lime' },
+            { videoBlob: null, videoUrl: null, saved: false, name: '', answer: '', color: 'purple' }
+        ];
+
+        // Grade Selection Helper
+        function selectGrade(grade) {
+            studentInfo.grade = grade;
+            document.getElementById('selectedGrade').value = grade;
+            document.querySelectorAll('.grade-btn').forEach(btn => {
+                if (btn.textContent.trim() === grade) {
+                    btn.classList.add('border-cyan-400', 'text-cyan-300', 'bg-cyan-950/80', 'shadow-[0_0_15px_rgba(0,243,255,0.4)]');
+                    btn.classList.remove('border-slate-700', 'bg-slate-800/80');
+                } else {
+                    btn.classList.remove('border-cyan-400', 'text-cyan-300', 'bg-cyan-950/80', 'shadow-[0_0_15px_rgba(0,243,255,0.4)]');
+                    btn.classList.add('border-slate-700', 'bg-slate-800/80');
+                }
+            });
+        }
+
+        // Dialog Handler
+        function showDialog(title, message, iconClass = 'fa-solid fa-circle-exclamation') {
+            document.getElementById('dialogTitle').textContent = title;
+            document.getElementById('dialogMessage').textContent = message;
+            document.getElementById('dialogIcon').innerHTML = `<i class="${iconClass}"></i>`;
+            document.getElementById('dialogModal').classList.remove('hidden');
+        }
+
+        function closeDialog() {
+            document.getElementById('dialogModal').classList.add('hidden');
+        }
+
+        // Setup Page Handler
+        function handleStartActivity(e) {
+            e.preventDefault();
+            const grade = document.getElementById('selectedGrade').value;
+            const name = document.getElementById('englishName').value.trim();
+            const classNum = document.getElementById('classNumber').value.trim();
+
+            if (!grade) {
+                showDialog('Selection Required', 'Please select your grade first (e.g. 501).');
+                return;
+            }
+            if (!name || !classNum) {
+                showDialog('Information Required', 'Please enter your English name and class number.');
+                return;
+            }
+
+            studentInfo.grade = grade;
+            studentInfo.name = name;
+            studentInfo.classNum = classNum;
+
+            // Render Header
+            document.getElementById('displayStudentName').textContent = name;
+            document.getElementById('displayGradeClass').textContent = `Class ${grade} #${classNum}`;
+
+            // Switch to Main Page
+            document.getElementById('pageSetup').classList.add('hidden');
+            document.getElementById('pageMain').classList.remove('hidden');
+            document.getElementById('pageMain').classList.add('flex');
+        }
+
+        // Open Camera Modal
+        async function openRecordModal(index) {
+            if (boxData[index].saved) {
+                showDialog('Locked Box', 'This video has already been saved and locked! It cannot be deleted or changed.');
+                return;
+            }
+
+            activeBoxIndex = index;
+            recordedChunks = [];
+            document.getElementById('modalTitle').textContent = `Record Video - Interview #${index + 1}`;
+            
+            // Reset Modal Elements
+            const liveVideo = document.getElementById('cameraPreview');
+            const recVideo = document.getElementById('modalRecordedPreview');
+            liveVideo.classList.remove('hidden');
+            recVideo.classList.add('hidden');
+            recVideo.src = '';
+
+            document.getElementById('btnStartRecord').classList.remove('hidden');
+            document.getElementById('btnStartRecord').disabled = false;
+            document.getElementById('btnStopRecord').classList.add('hidden');
+            document.getElementById('btnRetake').classList.add('hidden');
+            document.getElementById('btnSaveVideo').classList.add('hidden');
+            document.getElementById('recordingIndicator').classList.add('hidden');
+
+            document.getElementById('cameraModal').classList.remove('hidden');
+
+            // Request WebRTC Media
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                liveVideo.srcObject = mediaStream;
+            } catch (err) {
+                console.warn("Camera stream access error/fallback:", err);
+                // Fallback canvas video preview stream
+                startSimulatedCameraStream(liveVideo);
+            }
+        }
+
+        // Simulated camera stream canvas generator for non-supported browsers/HTTPS iframe tests
+        function startSimulatedCameraStream(videoElement) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 360;
+            const ctx = canvas.getContext('2d');
+            let hue = 0;
+
+            function draw() {
+                if (!mediaStream && !videoElement.classList.contains('hidden')) {
+                    ctx.fillStyle = '#0f172a';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Animated graphic
+                    hue = (hue + 2) % 360;
+                    ctx.fillStyle = `hsl(${hue}, 80%, 50%)`;
+                    ctx.beginPath();
+                    ctx.arc(canvas.width / 2, canvas.height / 2, 60, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 20px Fredoka';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('Live Camera Stream Simulator', canvas.width / 2, canvas.height / 2 + 100);
+
+                    requestAnimationFrame(draw);
+                }
+            }
+            draw();
+            const canvasStream = canvas.captureStream(30);
+            videoElement.srcObject = canvasStream;
+        }
+
+        // Start Media Recording
+        function startRecording() {
+            const liveVideo = document.getElementById('cameraPreview');
+            if (!liveVideo.srcObject) return;
+
+            recordedChunks = [];
+            try {
+                mediaRecorder = new MediaRecorder(liveVideo.srcObject);
+            } catch (e) {
+                // Fallback mock recorder if browser MediaRecorder fails
+                mediaRecorder = createMockRecorder();
+            }
+
+            mediaRecorder.ondataavailable = (event) => {
+                if (event.data && event.data.size > 0) {
+                    recordedChunks.push(event.data);
+                }
+            };
+
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                const videoURL = URL.createObjectURL(blob);
+                
+                const recVideo = document.getElementById('modalRecordedPreview');
+                recVideo.src = videoURL;
+                liveVideo.classList.add('hidden');
+                recVideo.classList.remove('hidden');
+
+                document.getElementById('btnStopRecord').classList.add('hidden');
+                document.getElementById('btnRetake').classList.remove('hidden');
+                document.getElementById('btnSaveVideo').classList.remove('hidden');
+
+                // Temporarily stash
+                boxData[activeBoxIndex].tempBlob = blob;
+                boxData[activeBoxIndex].tempUrl = videoURL;
+            };
+
+            mediaRecorder.start();
+
+            // UI updates
+            document.getElementById('btnStartRecord').classList.add('hidden');
+            document.getElementById('btnStopRecord').classList.remove('hidden');
+            document.getElementById('btnStopRecord').disabled = false;
+            document.getElementById('btnStopRecord').classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('recordingIndicator').classList.remove('hidden');
+
+            // Timer
+            recordSeconds = 0;
+            document.getElementById('recordTimer').textContent = '0s';
+            recordTimerInterval = setInterval(() => {
+                recordSeconds++;
+                document.getElementById('recordTimer').textContent = `${recordSeconds}s`;
+            }, 1000);
+        }
+
+        // Mock recorder fallback helper
+        function createMockRecorder() {
+            let onstopCb = null;
+            let ondataCb = null;
+            return {
+                start: () => {},
+                stop: () => {
+                    if (ondataCb) ondataCb({ data: new Blob(['mock video data'], { type: 'video/webm' }) });
+                    if (onstopCb) onstopCb();
+                },
+                set ondataavailable(cb) { ondataCb = cb; },
+                set onstop(cb) { onstopCb = cb; }
+            };
+        }
+
+        // Stop Media Recording
+        function stopRecording() {
+            clearInterval(recordTimerInterval);
+            document.getElementById('recordingIndicator').classList.add('hidden');
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+            }
+        }
+
+        // Retake Recording
+        function retakeVideo() {
+            const liveVideo = document.getElementById('cameraPreview');
+            const recVideo = document.getElementById('modalRecordedPreview');
+
+            recVideo.classList.add('hidden');
+            liveVideo.classList.remove('hidden');
+
+            document.getElementById('btnRetake').classList.add('hidden');
+            document.getElementById('btnSaveVideo').classList.add('hidden');
+            document.getElementById('btnStartRecord').classList.remove('hidden');
+            document.getElementById('btnStartRecord').disabled = false;
+        }
+
+        // Use Simulated Generated Clip
+        function useSimulatedVideo() {
+            clearInterval(recordTimerInterval);
+            document.getElementById('recordingIndicator').classList.add('hidden');
+            
+            // Create canvas video blob
+            const canvas = document.createElement('canvas');
+            canvas.width = 320;
+            canvas.height = 180;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#1e1b4b';
+            ctx.fillRect(0,0,320,180);
+            ctx.fillStyle = '#00f3ff';
+            ctx.font = 'bold 16px Fredoka';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Interview ${activeBoxIndex + 1} Video`, 160, 90);
+
+            // Mock video fallback
+            const recVideo = document.getElementById('modalRecordedPreview');
+            const mockUrl = canvas.toDataURL('image/png'); // standard fallback image/video poster
+            recVideo.src = mockUrl;
+            
+            document.getElementById('cameraPreview').classList.add('hidden');
+            recVideo.classList.remove('hidden');
+
+            document.getElementById('btnStartRecord').classList.add('hidden');
+            document.getElementById('btnStopRecord').classList.add('hidden');
+            document.getElementById('btnRetake').classList.remove('hidden');
+            document.getElementById('btnSaveVideo').classList.remove('hidden');
+
+            boxData[activeBoxIndex].tempUrl = mockUrl;
+            boxData[activeBoxIndex].tempBlob = new Blob(['sample'], { type: 'video/mp4' });
+        }
+
+        // Save Video permanently to Box
+        function saveVideo() {
+            if (activeBoxIndex === null) return;
+
+            const box = boxData[activeBoxIndex];
+            box.videoUrl = box.tempUrl || box.videoUrl;
+            box.saved = true;
+
+            // Update main box UI
+            const placeholder = document.getElementById(`videoPlaceholder-${activeBoxIndex}`);
+            const videoElem = document.getElementById(`recordedVideo-${activeBoxIndex}`);
+            const badge = document.getElementById(`statusBadge-${activeBoxIndex}`);
+
+            placeholder.classList.add('hidden');
+            videoElem.classList.remove('hidden');
+            videoElem.src = box.videoUrl;
+
+            // Status badge update
+            badge.className = "text-xs font-bold px-2 py-0.5 rounded text-lime-400 bg-lime-950 border border-lime-500/50 flex items-center gap-1";
+            badge.innerHTML = `<i class="fa-solid fa-lock"></i> SAVED`;
+
+            closeCameraModal();
+            showDialog('Video Saved!', 'Your video response has been saved and locked! You can now type your interviewee\'s answer.', 'fa-solid fa-lock text-lime-400');
+        }
+
+        // Close Camera Modal and stop tracks
+        function closeCameraModal() {
+            clearInterval(recordTimerInterval);
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                mediaStream = null;
+            }
+            document.getElementById('cameraModal').classList.add('hidden');
+        }
+
+        // Confirm & Submit Activity
+        function confirmSubmitDone() {
+            // Read input values
+            for (let i = 0; i < 4; i++) {
+                boxData[i].name = document.getElementById(`intervieweeName-${i}`).value.trim();
+                boxData[i].answer = document.getElementById(`intervieweeAnswer-${i}`).value.trim();
+            }
+
+            // Count completed boxes
+            let savedCount = 0;
+            boxData.forEach(box => {
+                if (box.saved && box.name !== '' && box.answer !== '') {
+                    savedCount++;
+                }
+            });
+
+            if (savedCount === 0) {
+                showDialog('No Completed Entries', 'Please record and save at least 1 video interview with name and answer before clicking Done!');
+                return;
+            }
+
+            // Lock all main inputs
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`intervieweeName-${i}`).disabled = true;
+                document.getElementById(`intervieweeAnswer-${i}`).disabled = true;
+            }
+
+            // Calculate Score based on prompt rules:
+            // 4 boxes = 100%, 3 = 90%, 2 = 80%, 1 = 70%
+            let scorePct = 0;
+            if (savedCount === 4) scorePct = 100;
+            else if (savedCount === 3) scorePct = 90;
+            else if (savedCount === 2) scorePct = 80;
+            else if (savedCount === 1) scorePct = 70;
+
+            // Transition to Final Page
+            renderFinalSummaryPage(savedCount, scorePct);
+        }
+
+        function renderFinalSummaryPage(savedCount, scorePct) {
+            document.getElementById('pageMain').classList.add('hidden');
+            document.getElementById('pageMain').classList.remove('flex');
+
+            const finalPage = document.getElementById('pageFinal');
+            finalPage.classList.remove('hidden');
+            finalPage.classList.add('flex');
+
+            // Populate Student Summary
+            document.getElementById('finalStudentName').textContent = studentInfo.name;
+            document.getElementById('finalGradeClass').textContent = `Class ${studentInfo.grade} • Number #${studentInfo.classNum}`;
+            document.getElementById('finalScoreDisplay').textContent = `${scorePct}%`;
+            document.getElementById('finalBoxesCount').textContent = `${savedCount} / 4 Interviews Completed`;
+
+            // Render Video Clips & Answers
+            const container = document.getElementById('finalGridContainer');
+            container.innerHTML = '';
+
+            boxData.forEach((box, i) => {
+                const colorMap = {
+                    pink: { border: 'neon-box-pink', text: 'neon-text-pink', label: 'bg-pink-950 text-pink-400' },
+                    cyan: { border: 'neon-box-cyan', text: 'neon-text-cyan', label: 'bg-cyan-950 text-cyan-400' },
+                    lime: { border: 'neon-box-lime', text: 'neon-text-lime', label: 'bg-lime-950 text-lime-400' },
+                    purple: { border: 'neon-box-purple', text: 'neon-text-purple', label: 'bg-purple-950 text-purple-400' }
+                };
+
+                const theme = colorMap[box.color];
+
+                const item = document.createElement('div');
+                item.className = `${theme.border} bg-slate-900/90 rounded-2xl p-4 backdrop-blur-md flex flex-col justify-between`;
+
+                if (box.saved) {
+                    item.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-md ${theme.label}">
+                                Interview ${i + 1}
+                            </span>
+                            <span class="text-xs font-bold text-lime-400"><i class="fa-solid fa-circle-check"></i> Complete</span>
+                        </div>
+                        <div class="w-full aspect-video bg-black rounded-xl overflow-hidden my-2 border border-slate-800">
+                            <video src="${box.videoUrl}" class="w-full h-full object-cover" controls playsinline></video>
+                        </div>
+                        <div class="mt-3 space-y-1">
+                            <div class="text-xs text-slate-400 uppercase">Interviewee: <span class="font-bold text-white text-sm">${escapeHtml(box.name || 'N/A')}</span></div>
+                            <div class="text-sm font-semibold ${theme.text}">"${escapeHtml(box.answer || 'N/A')}"</div>
+                        </div>
+                    `;
+                } else {
+                    item.innerHTML = `
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold uppercase tracking-widest px-2.5 py-1 rounded-md bg-slate-800 text-slate-400">
+                                Interview ${i + 1}
+                            </span>
+                            <span class="text-xs text-slate-500 font-semibold">Not Completed</span>
+                        </div>
+                        <div class="w-full aspect-video bg-slate-950/60 rounded-xl flex flex-col items-center justify-center my-2 border border-dashed border-slate-800 text-slate-600">
+                            <i class="fa-solid fa-video-slash text-3xl mb-2"></i>
+                            <span class="text-xs">No Video Saved</span>
+                        </div>
+                        <div class="text-xs text-slate-500 italic mt-2">Empty response slot</div>
+                    `;
+                }
+
+                container.appendChild(item);
+            });
+
+            // Trigger Celebration Poppers!
+            triggerConfettiPoppers();
+        }
+
+        // HTML escaping safeguard
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+
+        // Confetti Poppers FX
+        function triggerConfettiPoppers() {
+            if (typeof confetti === 'function') {
+                // First Burst
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#ff007f', '#00f3ff', '#39ff14', '#b026ff', '#ffe600']
+                });
+
+                // Secondary Cannon Burst
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 50,
+                        angle: 60,
+                        spread: 55,
+                        origin: { x: 0 },
+                        colors: ['#ff007f', '#00f3ff']
+                    });
+                    confetti({
+                        particleCount: 50,
+                        angle: 120,
+                        spread: 55,
+                        origin: { x: 1 },
+                        colors: ['#39ff14', '#b026ff']
+                    });
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>
